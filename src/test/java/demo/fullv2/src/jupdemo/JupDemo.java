@@ -3,7 +3,7 @@
  *
  * Created on Dec 24, 2011, 3:17:48 PM
  */
-package jupdemo;
+package demo.fullv2.src.jupdemo;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -27,13 +27,14 @@ public class JupDemo extends javax.swing.JFrame {
     /** Creates new form JupDemo */
     public JupDemo() {
         initComponents();
+        this.setLocationRelativeTo(null);
         /**
          * Check for new version
          */
         int answer = -1;
         Release release = new Release();
         release.setpkgver("1.0");
-        release.setPkgrel("1");
+        release.setPkgrel("2");
         ReleaseXMLParser parser = new ReleaseXMLParser();
         try {
             Release current =
@@ -128,7 +129,7 @@ public class JupDemo extends javax.swing.JFrame {
 
         jLabel1.setText("This is jup demo!");
 
-        jLabel2.setText("Software Version: 1.0-1 ");
+        jLabel2.setText("Software Version: 1.0-2 ");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);

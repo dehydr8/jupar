@@ -20,7 +20,17 @@ public class Release implements Comparable {
 
     private String pubDate, pkgver, pkgrel, severity, message;
 
-    public String getPubDate() {
+    public Release() {
+    	super();
+    }
+    
+    public Release(String pkgver, String pkgrel) {
+		super();
+		this.pkgver = pkgver;
+		this.pkgrel = pkgrel;
+	}
+
+	public String getPubDate() {
         return pubDate;
     }
 

@@ -38,14 +38,13 @@ public class Downloader {
 
         File dir = new File(destinationdir);
         if (!dir.exists()) {
-            dir.mkdir();
+            dir.mkdirs();
         }
 
         while (iterator.hasNext()) {
             url = new java.net.URL((String) iterator.next());
             wget(url, destinationdir + File.separator + new File(url.getFile()).getName());
         }
-
     }
 
     private void wget(java.net.URL url, String destination) throws MalformedURLException, IOException {

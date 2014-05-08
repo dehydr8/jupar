@@ -13,16 +13,25 @@
 package jupar;
 
 import jupar.objects.Instruction;
+
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.Iterator;
+
 import jupar.objects.Modes;
+
 import org.xml.sax.SAXException;
+
 import jupar.parsers.UpdateXMLParser;
 
 /**
@@ -48,11 +57,29 @@ public class Updater {
                     delete(instruction.getDestination());
                     break;
                 case EXECUTE:
-                    Runtime.getRuntime().exec("java -jar " + tmp + File.separator + instruction.getFilename());
+                	execute(instruction, tmp);
                     break;
             }
         }
-
+    }
+    
+    private void execute(Instruction instruction, String tmp) throws IOException {
+    	String extension = "";
+    	String prefix = "java -jar " + tmp + File.separator;
+    	int i = instruction.getFilename().lastIndexOf('.');
+    	if (i > 0) {
+    	    extension = instruction.getFilename().substring(i+1).toLowerCase();
+    	}
+    	
+    	if (extension.equals("bat")) {
+    		prefix = "cmd /c ";
+    	} else if (extension.equals("sh")) {
+    		prefix = "sh ";
+    	}
+    	
+    	String command = prefix + instruction.getFilename();
+    	System.out.println("Executing > " + command);
+		Runtime.getRuntime().exec(command);
     }
     
     public void update(String instructionsxml, String tmp, String dstdir, Modes mode) throws SAXException,
@@ -82,6 +109,11 @@ public class Updater {
     private void copy(String source, String destination) throws FileNotFoundException, IOException {
         File srcfile = new File(source);
         File dstfile = new File(destination);
+        File dst = dstfile.getParentFile();
+        
+        if (!dst.exists()) {
+        	dst.mkdirs();
+        }
 
         InputStream in = new FileInputStream(srcfile);
         OutputStream out = new FileOutputStream(dstfile);
