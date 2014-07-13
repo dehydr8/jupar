@@ -12,27 +12,23 @@
  */
 package jupar;
 
-import jupar.objects.Instruction;
-
-import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.PrintStream;
 import java.util.Iterator;
 
+import jupar.objects.Instruction;
 import jupar.objects.Modes;
+import jupar.parsers.UpdateXMLParser;
 
 import org.xml.sax.SAXException;
-
-import jupar.parsers.UpdateXMLParser;
 
 /**
  *
@@ -40,7 +36,8 @@ import jupar.parsers.UpdateXMLParser;
  */
 public class Updater {
 
-    public void update(String instructionsxml, String tmp, Modes mode) throws SAXException,
+    @SuppressWarnings("rawtypes")
+	public void update(String instructionsxml, String tmp, Modes mode) throws SAXException,
             FileNotFoundException, IOException, InterruptedException {
 
         UpdateXMLParser parser = new UpdateXMLParser();
@@ -66,6 +63,8 @@ public class Updater {
     private void execute(Instruction instruction, String tmp) throws IOException {
     	String extension = "";
     	String prefix = "java -jar " + tmp + File.separator;
+    	boolean wait = true;
+    	
     	int i = instruction.getFilename().lastIndexOf('.');
     	if (i > 0) {
     	    extension = instruction.getFilename().substring(i+1).toLowerCase();
@@ -73,16 +72,45 @@ public class Updater {
     	
     	if (extension.equals("bat")) {
     		prefix = "cmd /c ";
+    		wait = false;
     	} else if (extension.equals("sh")) {
     		prefix = "sh ";
+    		wait = false;
     	}
     	
     	String command = prefix + instruction.getFilename();
     	System.out.println("Executing > " + command);
-		Runtime.getRuntime().exec(command);
+		Process p = Runtime.getRuntime().exec(command);
+		if (wait) {
+			try {
+				p.waitFor();
+				String line;
+
+				BufferedReader error = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+				while((line = error.readLine()) != null){
+				    System.out.println(command + " >> " + line);
+				}
+				error.close();
+
+				BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));
+				while((line=input.readLine()) != null){
+				    System.out.println(command + " >> " + line);
+				}
+				input.close();
+				OutputStream outputStream = p.getOutputStream();
+				PrintStream printStream = new PrintStream(outputStream);
+				printStream.println();
+				printStream.flush();
+				printStream.close();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
     }
     
-    public void update(String instructionsxml, String tmp, String dstdir, Modes mode) throws SAXException,
+    @SuppressWarnings("rawtypes")
+	public void update(String instructionsxml, String tmp, String dstdir, Modes mode) throws SAXException,
             FileNotFoundException, IOException, InterruptedException {
 
         UpdateXMLParser parser = new UpdateXMLParser();
