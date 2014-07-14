@@ -13,8 +13,10 @@
 package jupar.parsers;
 
 import java.util.ArrayList;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
+
 import jupar.objects.Instruction;
 
 /**
@@ -26,49 +28,42 @@ public class UpdateXMLParserHandler extends DefaultHandler {
     private String currentelement = "";
     private ArrayList<Instruction> instructions = new ArrayList<Instruction>();
     private Instruction instruction = new Instruction();
-    private boolean ininstruction = false;
-
+    private StringBuilder builder = new StringBuilder();
+    
     public UpdateXMLParserHandler() {
         super();
     }
 
     @Override
-    public void startElement(String uri, String name,
-            String qName, Attributes atts) {
+    public void startElement(String uri, String name, String qName, Attributes atts) {
         currentelement = qName;
-        ininstruction = true;
+        builder.setLength(0);
     }
 
     @Override
     public void endElement(String namespaceURI, String localName, String qName) {
-        ininstruction = false;
-
+    	
+        String value = builder.toString().trim();
+        
+        if (currentelement.equals("action")) {
+            instruction.setAction(value);
+        } else if (currentelement.equals("destination")) {
+            instruction.setDestination(value);
+        } else if (currentelement.equals("file")) {
+            instruction.setFilename(value);
+        }
+        
         if (qName.equals("instruction")) {
             instructions.add(instruction);
             instruction = new Instruction();
-            currentelement = "";
         }
+        
+        currentelement = "";
     }
 
     @Override
     public void characters(char ch[], int start, int length) {
-        String value = null;
-        if (!currentelement.equals("")) {
-            value = String.copyValueOf(ch, start, length).trim();
-        }
-
-        if (ininstruction) {
-
-            if (currentelement.equals("action")) {
-                instruction.setAction(value);
-            } else if (currentelement.equals("destination")) {
-                instruction.setDestination(value);
-            } else if (currentelement.equals("file")) {
-                instruction.setFilename(value);
-            }
-            currentelement = "";
-
-        }
+    	builder.append(String.copyValueOf(ch, start, length));
     }
 
     public ArrayList<Instruction> getInstructions() {

@@ -18,9 +18,14 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
+
 import jupar.objects.Modes;
+
 import org.xml.sax.SAXException;
+
 import jupar.parsers.DownloaderXMLParser;
 
 /**
@@ -29,20 +34,25 @@ import jupar.parsers.DownloaderXMLParser;
  */
 public class Downloader {
 
-    public void download(String filesxml, String destinationdir, Modes mode) throws SAXException,
+	public void download(String filesxml, String destinationdir, Modes mode) throws SAXException,
             FileNotFoundException, IOException, InterruptedException {
 
         DownloaderXMLParser parser = new DownloaderXMLParser();
-        Iterator iterator = parser.parse(filesxml, mode).iterator();
+        Iterator<String> iterator = parser.parse(filesxml, mode).iterator();
         java.net.URL url;
 
+        List<String> urls = new ArrayList<String>();
+        while (iterator.hasNext()) {
+        	urls.add(iterator.next());
+        }
+        
         File dir = new File(destinationdir);
         if (!dir.exists()) {
             dir.mkdirs();
         }
 
-        while (iterator.hasNext()) {
-            url = new java.net.URL((String) iterator.next());
+        for (String u : urls) {
+            url = new java.net.URL(u);
             wget(url, destinationdir + File.separator + new File(url.getFile()).getName());
         }
     }

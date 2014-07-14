@@ -12,22 +12,20 @@
  */
 package jupar;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.PrintStream;
 import java.util.Iterator;
 
 import jupar.objects.Instruction;
 import jupar.objects.Modes;
 import jupar.parsers.UpdateXMLParser;
 
+import org.apache.commons.io.FileUtils;
 import org.xml.sax.SAXException;
 
 /**
@@ -56,6 +54,9 @@ public class Updater {
                 case EXECUTE:
                 	execute(instruction, tmp);
                     break;
+                case CLEAR:
+                	FileUtils.cleanDirectory(new File(instruction.getDestination()));
+                    break;
             }
         }
     }
@@ -79,34 +80,11 @@ public class Updater {
     	}
     	
     	String command = prefix + instruction.getFilename();
-    	System.out.println("Executing > " + command);
+    	System.out.println("[JUPAR] exec(" + command + ")");
 		Process p = Runtime.getRuntime().exec(command);
-		if (wait) {
-			try {
-				p.waitFor();
-				String line;
-
-				BufferedReader error = new BufferedReader(new InputStreamReader(p.getErrorStream()));
-				while((line = error.readLine()) != null){
-				    System.out.println(command + " >> " + line);
-				}
-				error.close();
-
-				BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));
-				while((line=input.readLine()) != null){
-				    System.out.println(command + " >> " + line);
-				}
-				input.close();
-				OutputStream outputStream = p.getOutputStream();
-				PrintStream printStream = new PrintStream(outputStream);
-				printStream.println();
-				printStream.flush();
-				printStream.close();
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
+		
+		if (wait)
+			new ProcessOutputRedirector(p, command).redirect();
     }
     
     @SuppressWarnings("rawtypes")
@@ -128,6 +106,9 @@ public class Updater {
                     break;
                 case EXECUTE:
                     Runtime.getRuntime().exec("java -jar " + tmp + File.separator + instruction.getFilename());
+                    break;
+                case CLEAR:
+                	FileUtils.cleanDirectory(new File(instruction.getDestination()));
                     break;
             }
         }

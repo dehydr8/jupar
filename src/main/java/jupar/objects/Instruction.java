@@ -53,6 +53,8 @@ public class Instruction {
             this.action = Action.DELETE;
         } else if (value.equalsIgnoreCase("EXECUTE")) {
             this.action = Action.EXECUTE;
+        } else if (value.equalsIgnoreCase("CLEAR")) {
+            this.action = Action.CLEAR;
         }
     }
 }
