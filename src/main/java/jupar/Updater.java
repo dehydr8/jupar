@@ -24,6 +24,7 @@ import java.util.Iterator;
 import jupar.objects.Instruction;
 import jupar.objects.Modes;
 import jupar.parsers.UpdateXMLParser;
+import jupar.utils.JuparUtils;
 
 import org.apache.commons.io.FileUtils;
 import org.xml.sax.SAXException;
@@ -117,6 +118,10 @@ public class Updater {
 
     private void copy(String source, String destination) throws FileNotFoundException, IOException {
         File srcfile = new File(source);
+        
+        if (!srcfile.exists())
+        	return;
+        
         File dstfile = new File(destination);
         File dst = dstfile.getParentFile();
         

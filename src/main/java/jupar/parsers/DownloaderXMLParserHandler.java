@@ -14,6 +14,8 @@ package jupar.parsers;
 
 import java.util.ArrayList;
 
+import jupar.objects.FileDescription;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -25,7 +27,8 @@ import org.xml.sax.helpers.DefaultHandler;
 public class DownloaderXMLParserHandler extends DefaultHandler {
 
     private String currentelement = "";
-    private ArrayList<String> files = new ArrayList<String>();
+    private ArrayList<FileDescription> files = new ArrayList<FileDescription>();
+    private FileDescription description = new FileDescription();
     private StringBuilder builder = new StringBuilder();
     
     public DownloaderXMLParserHandler() {
@@ -40,10 +43,22 @@ public class DownloaderXMLParserHandler extends DefaultHandler {
     
     @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
-    	if (currentelement.equals("file")) {
-    		String value = builder.toString().trim();
-    		files.add(value);
-    	}
+        String value = builder.toString().trim();
+        
+        if (currentelement.equals("destination")) {
+        	description.setDestination(value);
+        } else if (currentelement.equals("filename")) {
+        	description.setFilename(value);
+        } else if (currentelement.equals("hash")) {
+        	description.setHash(value);
+        }
+        
+        if (qName.equals("file")) {
+        	files.add(description);
+        	description = new FileDescription();
+        }
+        
+        currentelement = "";
     }
 
     @Override
@@ -51,7 +66,7 @@ public class DownloaderXMLParserHandler extends DefaultHandler {
     	builder.append(String.copyValueOf(ch, start, length));
     }
 
-    public ArrayList<String> getFiles() {
+    public ArrayList<FileDescription> getFiles() {
         return files;
     }
 }

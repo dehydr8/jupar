@@ -46,7 +46,7 @@ public class Instruction {
         this.destination = destination;
     }
 
-    public void setAction(String value) {
+	public void setAction(String value) {
         if (value.equalsIgnoreCase("MOVE")) {
             this.action = Action.MOVE;
         } else if (value.equalsIgnoreCase("DELETE")) {

@@ -22,11 +22,13 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import jupar.objects.FileDescription;
 import jupar.objects.Modes;
 
 import org.xml.sax.SAXException;
 
 import jupar.parsers.DownloaderXMLParser;
+import jupar.utils.JuparUtils;
 
 /**
  *
@@ -38,12 +40,24 @@ public class Downloader {
             FileNotFoundException, IOException, InterruptedException {
 
         DownloaderXMLParser parser = new DownloaderXMLParser();
-        Iterator<String> iterator = parser.parse(filesxml, mode).iterator();
+        Iterator<FileDescription> iterator = parser.parse(filesxml, mode).iterator();
         java.net.URL url;
 
         List<String> urls = new ArrayList<String>();
         while (iterator.hasNext()) {
-        	urls.add(iterator.next());
+        	
+        	FileDescription element = iterator.next();
+        	
+        	String fileHash = JuparUtils.getFileHash(element.getDestination());
+        	
+        	boolean matches = false;
+        	
+        	if (fileHash != null && element.getHash() != null)
+        		if (fileHash.equalsIgnoreCase(element.getHash()))
+        			matches = true;
+        	
+        	if (!matches)
+        		urls.add(element.getFilename());
         }
         
         File dir = new File(destinationdir);

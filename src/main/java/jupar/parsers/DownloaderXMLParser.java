@@ -17,7 +17,10 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+
+import jupar.objects.FileDescription;
 import jupar.objects.Modes;
+
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
@@ -29,7 +32,7 @@ import org.xml.sax.helpers.XMLReaderFactory;
  */
 public class DownloaderXMLParser {
 
-    public ArrayList<String> parse(String filename, Modes mode) throws SAXException,
+    public ArrayList<FileDescription> parse(String filename, Modes mode) throws SAXException,
             FileNotFoundException, IOException, InterruptedException {
         XMLReader reader = XMLReaderFactory.createXMLReader();
         DownloaderXMLParserHandler handler = new DownloaderXMLParserHandler();
