@@ -12,13 +12,11 @@ Contributors
 Usage
 -----
 
-For pushing an update, you require three files.
-1. latest.xml
-..* This file contains information about the latest version, release and changelog
-2. files.xml
-..* This file contains a list of files to be downloaded
-3. update.xml
-..* This file specifies where to move (or other actions) the files that are downloaded
+For pushing an update, you require three files:
+
+1. **latest.xml** (This file contains information about the latest version, release and changelog)
+2. **files.xml** (This file contains a list of files to be downloaded)
+3. **update.xml** (This file specifies where to move [or other actions] the files that are downloaded)
 
 *You can host your updates at a public location, e.g. Amazon S3 or your own server*
 
