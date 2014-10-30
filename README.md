@@ -32,7 +32,7 @@ String updateRepositoryUrl = "http://yourbucket.s3.amazonaws.com/updates/";
 String temporaryDirectoryForUpdates = "tmp";
 
 Release update = parser.parse(updateRepositoryUrl + "latest.xml", Modes.URL);
-if (update.compareTo(update) > 0) {
+if (update.compareTo(current) > 0) {
 
     // A new update is available, download that update
     downloader.download(updateRepositoryUrl + "files.xml", temporaryDirectoryForUpdates, Modes.URL);
