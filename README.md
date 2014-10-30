@@ -3,10 +3,11 @@ JUPAR
 
 Java desktop application updates made easy!
 
-Author
-------
+Contributors
+------------
 
-[Periklis Ntanasis](http://masterex.github.io/archive/2011/12/25/jupar.html), [Osama Khalid](http://codinghazard.com)
+1. [Periklis Ntanasis](http://masterex.github.io/archive/2011/12/25/jupar.html) (Author)
+2. [Osama Khalid](http://codinghazard.com)
 
 Usage
 -----
